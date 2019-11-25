@@ -7,24 +7,46 @@ import warnings
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-import re
+from email_validator import validate_email, EmailNotValidError
 
 root = Tk()
+def exit_btt(*args):
+    root.destroy()
 def check (*args):
     try:
         warnings.filterwarnings("ignore")
         uname=username.get()
         emailid=email.get()
         passw=password.get()
-        email1='chidambar.joshigmail.com'
-        regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
-        if(re.search(regex,email1)==False):
+        try:
+            if(uname==""):                
+                messagebox.showinfo("MESSAGE","Enter UserName")
+                username.delete(first=0,last=100)
+                emailtx.delete(first=0,last=100)
+                pass1.delete(first=0,last=100)
+            elif(passw==""):                
+                messagebox.showinfo("MESSAGE","Enter Password")
+                username.delete(first=0,last=100)
+                emailtx.delete(first=0,last=100)
+                pass1.delete(first=0,last=100)
+            elif(emailid==""):                
+                messagebox.showinfo("MESSAGE","Enter EmailID")
+                username.delete(first=0,last=100)
+                emailtx.delete(first=0,last=100)
+                pass1.delete(first=0,last=100)
             
-            
-            print(uname)
-        print(uname)
+            else:
+                
+                v = validate_email(emailid)
+                print("Valid Email ")
+                pass_very(uname,emailid,passw)
         
-        pass_very(uname,emailid,passw)
+        except EmailNotValidError as e:
+            messagebox.showinfo("MESSAGE","Email id is not valid")
+            username.delete(first=0,last=100)
+            emailtx.delete(first=0,last=100)
+            pass1.delete(first=0,last=100)
+         
            
     except ValueError:
         pass
@@ -33,16 +55,23 @@ def send_mail(uname,emailid,passw,Status):
     try:
         mail_content=""
         sender_address = '17p2848@math.git.edu'
-        sender_pass = '99631@git'
+        sender_pass = 'Chidu@123'
         receiver_address = emailid
         message = MIMEMultipart()
         message['From'] = sender_address
         message['To'] = receiver_address
-        message['Subject'] = 'Password verification'
+        message['Subject'] = 'Password Verification'
         if(Status=="Bad password"):
             mail_content = '''Hello,%s
-your password %s, is Bad password please change its as soon as possible
-your password must contain 8 charecters and it shoud be alphanumric. 
+your password %s, is Bad password please change your Password
+your Should include the following :
+1.Password should have more than 8 character
+2.Password should not have Common Password
+3.Password should not have Common Words
+4.Password should not include your User_Name
+5.password should not include Repitative character
+
+
 
 Thank You
 
@@ -50,12 +79,12 @@ sent by
 passwordcheckingsystem
 
 '''%(uname,passw)
-            print(mail_content)
+           # print(mail_content)
         if(Status=="Good Password"):
         
             mail_content = '''Hello,%s
 your password %s, is Stong password ...
-change the password frequently. 
+Change your Password Frequently, which makes your account be more secure 
 
 Thank You
 
@@ -74,12 +103,20 @@ passwordcheckingsystem
         msg='''Detected : %s 
         check your email for further instructions'''%(Status)
         messagebox.showinfo("MESSAGE",msg)
+        username.delete(first=0,last=100)
+        emailtx.delete(first=0,last=100)
+        pass1.delete(first=0,last=100)
+        username.focus()
     except :
         msg='''Detected : %s 
         Could not send Email
         check network connection '''%(Status)
         messagebox.showinfo("MESSAGE",msg)
-        #messagebox.showinfo("MESSAGE","Could not connect to server - is it down? ")
+        username.delete(first=0,last=100)
+        emailtx.delete(first=0,last=100)
+        pass1.delete(first=0,last=100)
+        username.focus()
+        
         #print("Could not connect to server - is it down? ")
 
 def pass_very (uname,emailid,passw):
@@ -120,18 +157,18 @@ username=StringVar()
 email =StringVar()
 password=StringVar()
 
-feet_entry = ttk.Entry(mainframe, width=7, textvariable=username)
+username = ttk.Entry(mainframe, width=15, textvariable=username)
 ttk.Label(mainframe, text="User Name").grid(column=1, row=1, sticky=W)
-feet_entry.grid(column=2, row=1, sticky=(W, E))
+username.grid(column=2, row=1, sticky=(W, E))
 
-feet_entry = ttk.Entry(mainframe, width=7, textvariable=email)
+emailtx= ttk.Entry(mainframe, width=15, textvariable=email)
 ttk.Label(mainframe, text="Email ID").grid(column=1, row=2, sticky=W)
-feet_entry.grid(column=2, row=2, sticky=(W, E))
+emailtx.grid(column=2, row=2, sticky=(W, E))
 
-feet_entry = ttk.Entry(mainframe, width=7, textvariable=password,show="*")
-ttk.Label(mainframe, text="Password").grid(column=1, row=3, sticky=W)
-feet_entry.grid(column=2, row=3, sticky=(W, E))
-
+pass1 = ttk.Entry(mainframe, width=15, textvariable=password,show="*")
+ttk.Label(mainframe, text="Password" ).grid(column=1, row=3, sticky=W)
+pass1.grid(column=2, row=3, sticky=(W, E))
+ttk.Button(mainframe, text="Exit", command=exit_btt).grid(column=1, row=4, sticky=W)
 ttk.Button(mainframe, text="Check Password", command=check).grid(column=2, row=4, sticky=W)
 
 for child in mainframe.winfo_children(): child.grid_configure(padx=5, pady=5)
