@@ -1,4 +1,5 @@
 1.	Project Title
+
 The project “Analysis of Bad Passwords and the NIST Guidelines” provides technical guidelines to agencies for the implementation of digital authentication.
 2.	Introduction
 
