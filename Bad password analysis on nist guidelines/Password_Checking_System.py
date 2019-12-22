@@ -2,18 +2,44 @@ from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
 import pandas as pd
-import csv
 import warnings
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email_validator import validate_email, EmailNotValidError
+import subprocess
+import os
 
 root = Tk()
+def analysis(*args):
+    #os.remove("User_detais.pdf")
+    #os.remove("User_List.pdf")
+    #os.remove("User_List_grapic.pdf") 
+    subprocess.call("analysis.py ", shell=True)
+    messagebox.showinfo("MESSAGE","Analysis Pdf Successfully Generated")
+    username.delete(first=0,last=100)
+    emailtx.delete(first=0,last=100)
+    pass1.delete(first=0,last=100)
+    username.focus()
+def openpdf(*args):
+    os.remove("User_detais.pdf")
+    os.remove("User_List.pdf")
+    os.remove("User_List_grapic.pdf") 
+    subprocess.call("User_List_grapic.pdf 1", shell=True)
+    #messagebox.showinfo("MESSAGE","Analysis Pdf Sucessful Generated")
+    username.delete(first=0,last=100)
+    emailtx.delete(first=0,last=100)
+    pass1.delete(first=0,last=100)
+    username.focus()
+    
+    
 def exit_btt(*args):
     root.destroy()
 def check (*args):
     try:
+        os.remove("User_detais.pdf")
+        os.remove("User_List.pdf")
+        os.remove("User_List_grapic.pdf")        
         warnings.filterwarnings("ignore")
         uname=username.get()
         emailid=email.get()
@@ -83,7 +109,7 @@ passwordcheckingsystem
         if(Status=="Good Password"):
         
             mail_content = '''Hello,%s
-your password %s, is Stong password ...
+your password , is Stong password ...
 Change your Password Frequently, which makes your account be more secure 
 
 Thank You
@@ -91,7 +117,7 @@ Thank You
 sent by
 passwordcheckingsystem
 
-'''%(uname,passw)
+'''%(uname)
             print(mail_content)        
         message.attach(MIMEText(mail_content, 'plain'))
         session = smtplib.SMTP('smtp.gmail.com', 587) #use gmail with port
@@ -139,7 +165,7 @@ def pass_very (uname,emailid,passw):
     if(users['bad_password'].any(axis=0)==True):
         
         Status="Bad password"
-        print(Status)
+        #print(Status)
         
     else :
         Status="Good Password"
@@ -170,6 +196,11 @@ ttk.Label(mainframe, text="Password" ).grid(column=1, row=3, sticky=W)
 pass1.grid(column=2, row=3, sticky=(W, E))
 ttk.Button(mainframe, text="Exit", command=exit_btt).grid(column=1, row=4, sticky=W)
 ttk.Button(mainframe, text="Check Password", command=check).grid(column=2, row=4, sticky=W)
+
+ttk.Label(mainframe, text="PASSWORD ANALYSIS OF CSV FILE DATASET.....").grid(column=1, row=5, sticky=W)
+ttk.Button(mainframe, text="Analysis", command=analysis).grid(column=1, row=6, sticky=W)
+ttk.Button(mainframe, text="Open Pdf", command=openpdf).grid(column=2, row=6, sticky=W)
+ttk.Button(mainframe, text="Exit", command=exit_btt).grid(column=1, row=7, sticky=W)
 
 for child in mainframe.winfo_children(): child.grid_configure(padx=5, pady=5)
 root.mainloop()
