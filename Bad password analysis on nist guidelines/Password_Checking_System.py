@@ -12,34 +12,35 @@ import os
 
 root = Tk()
 def analysis(*args):
-    #os.remove("User_detais.pdf")
-    #os.remove("User_List.pdf")
-    #os.remove("User_List_grapic.pdf") 
+    if os.path.isfile('User_List_grapic.pdf'):
+        os.remove("User_List_grapic.pdf") 
     subprocess.call("analysis.py ", shell=True)
+    os.remove("User_List.pdf")
+    os.remove("User_detais.pdf") 
     messagebox.showinfo("MESSAGE","Analysis Pdf Successfully Generated")
     username.delete(first=0,last=100)
     emailtx.delete(first=0,last=100)
     pass1.delete(first=0,last=100)
     username.focus()
 def openpdf(*args):
-    os.remove("User_detais.pdf")
-    os.remove("User_List.pdf")
-    os.remove("User_List_grapic.pdf") 
-    subprocess.call("User_List_grapic.pdf 1", shell=True)
-    #messagebox.showinfo("MESSAGE","Analysis Pdf Sucessful Generated")
-    username.delete(first=0,last=100)
-    emailtx.delete(first=0,last=100)
-    pass1.delete(first=0,last=100)
-    username.focus()
+    if os.path.isfile('User_List_grapic.pdf')==False:
+        print("file missing")
+        messagebox.showinfo("MESSAGE","Please Generate the Analysis pdf by pressing Analysis Button")
+    else:
+        
+        subprocess.Popen("User_List_grapic.pdf 1", shell=True)
+        username.delete(first=0,last=100)
+        emailtx.delete(first=0,last=100)
+        pass1.delete(first=0,last=100)
+        username.focus()
     
     
 def exit_btt(*args):
+    if os.path.isfile('User_List_grapic.pdf'):
+        os.remove("User_List_grapic.pdf") 
     root.destroy()
 def check (*args):
-    try:
-        os.remove("User_detais.pdf")
-        os.remove("User_List.pdf")
-        os.remove("User_List_grapic.pdf")        
+    try:       
         warnings.filterwarnings("ignore")
         uname=username.get()
         emailid=email.get()
@@ -76,6 +77,8 @@ def check (*args):
            
     except ValueError:
         pass
+
+
 def send_mail(uname,emailid,passw,Status):
     #print(hi)
     try:
@@ -142,11 +145,10 @@ passwordcheckingsystem
         emailtx.delete(first=0,last=100)
         pass1.delete(first=0,last=100)
         username.focus()
-        
-        #print("Could not connect to server - is it down? ")
+
+
 
 def pass_very (uname,emailid,passw):
-    #users = pd.read_csv('datasets/userscheck.csv', index_col='user_name')
     common_passwords = pd.read_csv('datasets/10_million_password_list_top_10000.txt', header=None, squeeze=True)
     data = [[uname,str(passw)]]
     users = pd.DataFrame(data,columns=['user_name','password'])
@@ -182,25 +184,25 @@ root.rowconfigure(0, weight=1)
 username=StringVar()
 email =StringVar()
 password=StringVar()
+ttk.Label(mainframe, text="PASSWORD CHECKING SYSTEM.....",font='times 14 bold').grid(columnspan=2, row=1, sticky=W)
 
 username = ttk.Entry(mainframe, width=15, textvariable=username)
-ttk.Label(mainframe, text="User Name").grid(column=1, row=1, sticky=W)
-username.grid(column=2, row=1, sticky=(W, E))
+ttk.Label(mainframe, text="User Name").grid(column=1, row=2, sticky=W)
+username.grid(column=2, row=2, sticky=(E))
 
 emailtx= ttk.Entry(mainframe, width=15, textvariable=email)
-ttk.Label(mainframe, text="Email ID").grid(column=1, row=2, sticky=W)
-emailtx.grid(column=2, row=2, sticky=(W, E))
+ttk.Label(mainframe, text="Email ID").grid(column=1, row=3, sticky=W)
+emailtx.grid(column=2, row=3, sticky=(W, E))
 
 pass1 = ttk.Entry(mainframe, width=15, textvariable=password,show="*")
-ttk.Label(mainframe, text="Password" ).grid(column=1, row=3, sticky=W)
-pass1.grid(column=2, row=3, sticky=(W, E))
-ttk.Button(mainframe, text="Exit", command=exit_btt).grid(column=1, row=4, sticky=W)
-ttk.Button(mainframe, text="Check Password", command=check).grid(column=2, row=4, sticky=W)
+ttk.Label(mainframe, text="Password" ).grid(column=1, row=4, sticky=W)
+pass1.grid(column=2, row=4, sticky=(W, E))
+ttk.Button(mainframe, text="Check Password", command=check).grid(columnspan=2, row=5)
 
-ttk.Label(mainframe, text="PASSWORD ANALYSIS OF CSV FILE DATASET.....").grid(column=1, row=5, sticky=W)
-ttk.Button(mainframe, text="Analysis", command=analysis).grid(column=1, row=6, sticky=W)
-ttk.Button(mainframe, text="Open Pdf", command=openpdf).grid(column=2, row=6, sticky=W)
-ttk.Button(mainframe, text="Exit", command=exit_btt).grid(column=1, row=7, sticky=W)
+ttk.Label(mainframe, text="PASSWORD ANALYSIS OF CSV FILE DATASET.....",font='times 14 bold').grid(columnspan=2, row=6, sticky=W)
+ttk.Button(mainframe, text="Analysis", command=analysis).grid(column=1, row=7, sticky=W)
+ttk.Button(mainframe, text="Open Pdf", command=openpdf).grid(column=2, row=7, sticky=W)
+ttk.Button(mainframe, text="Exit", command=exit_btt).grid(columnspan=2, row=9)
 
 for child in mainframe.winfo_children(): child.grid_configure(padx=5, pady=5)
 root.mainloop()
